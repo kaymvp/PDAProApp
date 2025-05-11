@@ -1,13 +1,18 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
 
 const BACK_ICON = require('../assets/TextChatAssets/Arrow-Left.png');
 
-
 const DashboardScreen = () => {
-  const { navigate, goBack } = useNavigation();
+  const {navigate, goBack} = useNavigation();
 
   const unreadMessages = 2;
 
@@ -22,7 +27,8 @@ const DashboardScreen = () => {
         {/* Header */}
         <Text style={styles.header}>Mornings ARE hard!</Text>
         <Text style={styles.subheader}>
-          42% of parents are reporting that they also find mornings the most challenging part of the day.
+          42% of parents are reporting that they also find mornings the most
+          challenging part of the day.
         </Text>
 
         {/* Read More */}
@@ -30,12 +36,13 @@ const DashboardScreen = () => {
           <Text style={styles.readMoreText}>Read more</Text>
         </TouchableOpacity>
 
-            {/* Chat to Gale */}
-             <View style={styles.rowContainer}>
+        {/* Chat to Gale */}
+        <View style={styles.rowContainer}>
           <TouchableOpacity
             style={[styles.featureCard, styles.largeCard]}
-            onPress={() => navigate('Chat', { userId: 'user123', childId: 'child456' })}
-          >
+            onPress={() =>
+              navigate('Chat', {userId: 'user123', childId: 'child456'})
+            }>
             <View style={styles.iconRow}>
               {unreadMessages > 0 && (
                 <View style={styles.badge}>
@@ -44,13 +51,22 @@ const DashboardScreen = () => {
               )}
             </View>
             <Text style={styles.cardTitle}>Chat to Gale</Text>
-            <Text style={styles.cardDesc}>Get support and guidance from your PDA expert</Text>
+            <Text style={styles.cardDesc}>
+              Get support and guidance from your PDA expert
+            </Text>
           </TouchableOpacity>
 
           {/* Translator */}
-          <View style={[styles.featureCard, styles.translatorCard, styles.largeCard]}>
+          <View
+            style={[
+              styles.featureCard,
+              styles.translatorCard,
+              styles.largeCard,
+            ]}>
             <Text style={styles.cardTitle}>Translator</Text>
-            <Text style={styles.cardDesc}>Turn requests into non-demand language</Text>
+            <Text style={styles.cardDesc}>
+              Turn requests into non-demand language
+            </Text>
           </View>
         </View>
 
@@ -58,8 +74,9 @@ const DashboardScreen = () => {
         <Text style={styles.featureTitle}>Vote on the Next Feature!</Text>
         <View style={styles.ventingCard}>
           <Text style={styles.ventingTitle}>Venting Space</Text>
-          <Text style={styles.ventingcardDesc}>Share freely, receive empathy.   
-            No judgment – just support.</Text>
+          <Text style={styles.ventingcardDesc}>
+            Share freely, receive empathy. No judgment – just support.
+          </Text>
         </View>
       </ScrollView>
     </View>
@@ -83,14 +100,14 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 10,
   },
-  featureTitle:{
+  featureTitle: {
     fontSize: 18,
     color: '#08A2AF',
-    right:70,
+    right: 70,
     top: 60,
   },
 
-  chatCard:{
+  chatCard: {
     backgroundColor: '#FFBO3O',
     borderRadius: 20,
     padding: 20,
@@ -99,7 +116,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  ventingCard:{
+  ventingCard: {
     backgroundColor: '#14242F',
     borderRadius: 20,
     padding: 20,
@@ -108,19 +125,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-  ventingTitle:{
+  ventingTitle: {
     fontSize: 22,
     fontWeight: '700',
     color: '#EFEBE0',
     marginTop: 2,
-    right:100,
+    right: 100,
   },
-  ventingcardDesc:{
+  ventingcardDesc: {
     fontSize: 14,
     color: '#EFEBE0',
     textAlign: 'center',
     marginTop: 5,
-    right:70,
+    right: 70,
     paddingHorizontal: 60,
   },
   backIcon: {
@@ -202,7 +219,7 @@ const styles = StyleSheet.create({
   badge: {
     position: 'absolute',
     top: -116,
-    right:-95,
+    right: -95,
     backgroundColor: '#EFEBE0',
     borderRadius: 30,
     width: 40,

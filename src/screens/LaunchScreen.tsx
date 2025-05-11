@@ -1,25 +1,33 @@
-
-import { useNavigation } from '@react-navigation/native';
+// LaunchScreen.tsx
+// -----------------------------------------------------------
+// This screen thanks the user and prompts them to start a session
+// or skip for now. It's likely shown right after onboarding.
+// -----------------------------------------------------------
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 const LaunchScreen = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>Thanks for sharing. Your profile is ready!</Text>
-
-      {/* You can add your icon here */}
+      <Text style={styles.subtitle}>
+        Thanks for sharing. Your profile is ready!
+      </Text>
 
       <Text style={styles.description}>
-        From here, we've designed a quick session where you can discuss with an expert who understands PDA.
+        From here, we've designed a quick session where you can discuss with an
+        expert who understands PDA.
       </Text>
       <Text style={styles.highlightText}>
-        Based on what you've shared, we'll try to find a new practical solution to your current biggest issue.
+        Based on what you've shared, we'll try to find a new practical solution
+        to your current biggest issue.
       </Text>
 
-      <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate('Dashboard')}>
+      <TouchableOpacity
+        style={styles.primaryButton}
+        onPress={() => navigation.navigate('Dashboard')}>
         <Text style={styles.primaryButtonText}>Start Session</Text>
       </TouchableOpacity>
 

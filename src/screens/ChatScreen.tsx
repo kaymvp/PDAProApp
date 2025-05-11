@@ -23,17 +23,7 @@ import OFFLINE_ICON from '../assets/TextChatAssets/Offline-Gale.png';
 import MessageStatusIndicator from '../utils/ChatReadReceiptsAnimation';
 import {Text} from '../utils/CustomText';
 import SoundPlayer from 'react-native-sound-player';
-
-interface Message {
-  id: number;
-  sender: string;
-  text: string;
-  time: string;
-  isUser: boolean;
-  read?: boolean;
-  type?: string;
-  status: 'sent' | 'delivered' | 'read';
-}
+import {Message} from '../utils/MessageInterfaces';
 
 const predefinedMessages = [
   "Hello there I'm Gale, your PDA expert. How are you feeling today?",
@@ -65,83 +55,91 @@ const ChatScreen = () => {
   const [inputHeight, setInputHeight] = useState(40);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [lastSessionCode, setLastSessionCode] = useState<string | null>(null);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
   const [conversationHistory, setConversationHistory] = useState<string[]>([]);
 
- // Show predefined messages for first session
-const showPredefinedMessages = useCallback(async () => {
-  const newMessages: Message[] = predefinedMessages.map((text, i) => ({
-    id: Date.now() + i,
-    sender: 'Gale',
-    text,
-    time: getCurrentTime(),
-    isUser: false,
-    status: 'read',
-  }));
+  // Show predefined messages for first session
+  const showPredefinedMessages = useCallback(async () => {
+    const newMessages: Message[] = predefinedMessages.map((text, i) => ({
+      id: Date.now() + i,
+      sender: 'Gale',
+      text,
+      time: getCurrentTime(),
+      isUser: false,
+      status: 'read',
+    }));
 
-  setMessages(prev => [...prev, ...newMessages]);
+    setMessages(prev => [...prev, ...newMessages]);
 
-  // Save in background without waiting
-  AsyncStorage.setItem(
-    `chatMessages_${userId}_${childId}`,
-    JSON.stringify(newMessages)
-  );
-}, [userId, childId]);
-useEffect(() => {
-  let mounted = true;
+    // Save in background without waiting
+    AsyncStorage.setItem(
+      `chatMessages_${userId}_${childId}`,
+      JSON.stringify(newMessages),
+    );
+  }, [userId, childId]);
+  useEffect(() => {
+    let mounted = true;
 
-  const loadChatData = async () => {
-    try {
-      // Immediately show empty chat UI
-      if (mounted) {setIsLoading(false);}
-
-      // Load data in background
-      const keys = [
-        `chatMessages_${userId}_${childId}`,
-        `isFirstSession_${userId}_${childId}`,
-        `threadId_${userId}_${childId}`,
-        `lastSessionCode_${userId}_${childId}`,
-      ];
-
-      const [messages, firstSession, threadId, lastCode] = await AsyncStorage.multiGet(keys);
-
-      if (mounted) {
-        if (messages[1]) {
-          setMessages(JSON.parse(messages[1]));
+    const loadChatData = async () => {
+      try {
+        // Immediately show empty chat UI
+        if (mounted) {
+          setIsLoading(false);
         }
 
-        const isFirst = firstSession[1] !== 'false';
-        setIsFirstSession(isFirst);
+        // Load data in background
+        const keys = [
+          `chatMessages_${userId}_${childId}`,
+          `isFirstSession_${userId}_${childId}`,
+          `threadId_${userId}_${childId}`,
+          `lastSessionCode_${userId}_${childId}`,
+        ];
 
-        if (threadId[1]) {
-          setThreadId(threadId[1]);
-        } else {
-          const newThreadId = `thread_${Date.now()}`;
-          setThreadId(newThreadId);
-          AsyncStorage.setItem(keys[2], newThreadId); // No await for faster UI
+        const [messages, firstSession, threadId, lastCode] =
+          await AsyncStorage.multiGet(keys);
+
+        if (mounted) {
+          if (messages[1]) {
+            setMessages(JSON.parse(messages[1]));
+          }
+
+          const isFirst = firstSession[1] !== 'false';
+          setIsFirstSession(isFirst);
+
+          if (threadId[1]) {
+            setThreadId(threadId[1]);
+          } else {
+            const newThreadId = `thread_${Date.now()}`;
+            setThreadId(newThreadId);
+            AsyncStorage.setItem(keys[2], newThreadId); // No await for faster UI
+          }
+
+          if (lastCode[1]) {
+            setLastSessionCode(lastCode[1]);
+          }
+
+          if (
+            isFirst &&
+            (!messages[1] || JSON.parse(messages[1]).length === 0)
+          ) {
+            showPredefinedMessages();
+            AsyncStorage.setItem(keys[1], 'false'); // No await
+          }
         }
-
-        if (lastCode[1]) {
-          setLastSessionCode(lastCode[1]);
-        }
-
-        if (isFirst && (!messages[1] || JSON.parse(messages[1]).length === 0)) {
-          showPredefinedMessages();
-          AsyncStorage.setItem(keys[1], 'false'); // No await
+      } catch (error) {
+        console.error('Error loading chat:', error);
+        if (mounted) {
+          setIsLoading(false);
         }
       }
-    } catch (error) {
-      console.error('Error loading chat:', error);
-      if (mounted) {setIsLoading(false);}
-    }
-  };
+    };
 
-  loadChatData();
-  return () => { mounted = false; };
-}, [userId, childId, showPredefinedMessages]);
-
-
+    loadChatData();
+    return () => {
+      mounted = false;
+    };
+  }, [userId, childId, showPredefinedMessages]);
 
   // Keyboard visibility handlers
   useEffect(() => {
@@ -230,11 +228,15 @@ useEffect(() => {
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) {return;}
+    if (!inputMessage.trim()) {
+      return;
+    }
 
     try {
       // Play send sound
-      SoundPlayer.playAsset(require('../assets/TextChatSFX/SendMessage_SFX.mp3'));
+      SoundPlayer.playAsset(
+        require('../assets/TextChatSFX/SendMessage_SFX.mp3'),
+      );
     } catch (e) {
       console.log('Cannot play sound file', e);
     }
@@ -305,7 +307,6 @@ useEffect(() => {
             `chatMessages_${userId}_${childId}`,
             JSON.stringify(currentMessages),
           );
-
         }
 
         setIsGaleTyping(false);
@@ -329,7 +330,9 @@ useEffect(() => {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     const newHistory = [...conversationHistory, message];
-    if (newHistory.length > 10) {newHistory.shift();}
+    if (newHistory.length > 10) {
+      newHistory.shift();
+    }
     setConversationHistory(newHistory);
 
     const lastMessage = newHistory[newHistory.length - 1] || '';
@@ -345,7 +348,8 @@ useEffect(() => {
 
     // Every 3 messages, ask a reflection question
     if (newHistory.length % 3 === 0) {
-      const prompt = reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)];
+      const prompt =
+        reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)];
       responseText += `\n\nBy the way, ${prompt}`;
     }
 
@@ -399,11 +403,7 @@ useEffect(() => {
         <View style={styles.headerTextContainer}>
           <Text style={styles.senderName}>Gale</Text>
           <Text style={styles.statusText}>
-            {isGaleTyping
-              ? 'Typing...'
-              : isGaleOnline
-              ? 'Online'
-              : 'Available'}
+            {isGaleTyping ? 'Typing...' : isGaleOnline ? 'Online' : 'Available'}
           </Text>
         </View>
       </View>
@@ -638,12 +638,12 @@ const styles = StyleSheet.create({
   },
   messageRow: {
     marginBottom: 8,
-    maxWidth: '100%', 
+    maxWidth: '100%',
   },
   galemessageRow: {
     marginBottom: 8,
-    maxWidth: '100%', 
-    left:20
+    maxWidth: '100%',
+    left: 20,
   },
   userRow: {
     alignSelf: 'flex-end',
