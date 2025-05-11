@@ -83,7 +83,7 @@ You've successfully run and modified your React Native App. :partying_face:
 - If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
 
 # Bugs
-Read reciepts seen message is reverting back to delivered and this can be solved by having the status saved in the json and read back from async storage since its a demo with dummy data it might be difficult to set and unset the data unless its a actual payload.
+Read reciepts (seen status) message is reverting back to delivered and this can be solved by having the status saved in the json and read back from async storage since its a demo with dummy data it might be difficult to set and unset the data unless its a actual payload.
 
 
 
